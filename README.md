@@ -1,3 +1,291 @@
 # Machine-Learning-Project
 
 file:///Users/elizabethtru/Desktop/Course-Project---Machine-Learning.html
+
+---
+title: "Course Project - Machine Learning"
+author: "Elizabeth M. Trujillo"
+date: "2022-11-30"
+output: html_document
+---
+BACKGROUND
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset). 
+ 
+knitr::opts_chunk$set(echo = TRUE)
+
+#Check and change directory
+```{r, include=FALSE}
+getwd()
+setwd("/Users/elizabethtru/Desktop")
+```
+
+#Load necessary packages
+
+install.packages("writexl")
+
+```{r, include=FALSE}
+library("writexl")
+```
+  
+#Import training data
+```{r, include=FALSE}
+library(readxl)
+```
+
+```{r, include=FALSE}
+pml_training <- read_excel("pml-training.xls", 
+                             col_types = c("skip", "text", "numeric", 
+                                           "numeric", "numeric", "text", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "text", "text", "numeric", 
+                                           "text", "text", "numeric", "text", 
+                                           "text", "numeric", "text", "text", 
+                                           "text", "text", "text", "text", "text", 
+                                           "text", "text", "text", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "text", "text", "text", "text", "text", 
+                                           "text", "text", "text", "text", "text", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "text", "text", "text", "text", "text", 
+                                           "text", "text", "text", "text", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "text", "text", 
+                                           "numeric", "text", "text", "numeric", 
+                                           "text", "text", "numeric", "numeric", 
+                                           "text", "text", "text", "text", "text", 
+                                           "text", "text", "text", "text", "text", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "text", "text", "numeric", "text", 
+                                           "text", "numeric", "text", "text", 
+                                           "numeric", "numeric", "text", "text", 
+                                           "text", "text", "text", "text", "text", 
+                                           "text", "text", "text", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "numeric", 
+                                           "numeric", "numeric", "text"))
+
+```
+
+#Import testing data
+library(readxl)
+
+```{r, include=FALSE}
+pml_testing <- read_excel("pml-testing.xls", 
+                            col_types = c("skip", "text", "numeric", 
+                                          "numeric", "text", "text", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "text", "text", "numeric", 
+                                          "text", "text", "numeric", "text", 
+                                          "text", "numeric", "text", "text", 
+                                          "text", "text", "text", "text", "text", 
+                                          "text", "text", "text", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "text", "text", "text", "text", "text", 
+                                          "text", "text", "text", "text", "text", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "text", "text", "text", "text", "text", 
+                                          "text", "text", "text", "text", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "text", "text", 
+                                          "numeric", "text", "text", "numeric", 
+                                          "text", "text", "numeric", "numeric", 
+                                          "text", "text", "text", "text", "text", 
+                                          "text", "text", "text", "text", "text", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "text", "text", "numeric", "text", 
+                                          "text", "numeric", "text", "text", 
+                                          "numeric", "numeric", "text", "text", 
+                                          "text", "text", "text", "text", "text", 
+                                          "text", "text", "text", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric", 
+                                          "numeric", "numeric", "numeric"))
+
+```
+
+#View the excel sheets
+View(pml_testing)
+dim(pml_testing)
+#There are 20 observations and 159 variables in the Training dataset
+
+
+View(pml_training)
+dim(pml_training)
+#There are 16383 observations and 159 variables in the Testing dataset
+
+
+Data Reference:  “Ugulino, W.; Cardador, D.; Vega, K.; Velloso, E.; Milidiu, R.; Fuks, H. Wearable Computing: Accelerometers’ Data Classification of Body Postures and Movements”
+
+
+Create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, #and why you made the choices you did. You will also use your #prediction model to predict 20 different test cases. 
+
+#Load necessary packages
+install.packages("caret")
+
+```{r, include=FALSE}
+library(ggplot2)
+library(lattice)
+library(caret)
+```
+
+#Clean Training and Testing datasets by removing missing values
+
+```{r}
+testingData <- pml_testing[, colSums(is.na(pml_testing)) == 0]
+dim(testingData)
+```
+#There are 20 observation and 126 variables 
+
+View(testingData)
+
+
+```{r}
+trainingData<- pml_training[, colSums(is.na(pml_training)) == 0]
+dim(trainingData)
+```
+#There are 16383 obervations and 125 variables
+
+View(trainingData)
+
+
+#Setting up the Training dataset for prediction. I split the training dataset into 
+#65% as the train data and 35% as the test data. I can then calculate the sample error 
+#from this split dataset.
+
+```{r}
+set.seed(1500)
+library(caret)
+inTrain <- createDataPartition(trainingData$classe, p = 0.65, list = FALSE)
+trainData <- trainingData[inTrain, ]
+testData <- trainingData[-inTrain, ]
+dim(trainData)
+```
+#There are 10652 observations and 125 variables in the training data
+
+
+```{r}
+dim(testData)
+```
+#There at 5731 observations and 125 variables in the testing data
+
+#After removing missing values above, I will remove any values that are close to zero
+```{r}
+nearZero <- nearZeroVar(trainData)
+trainData <- trainData[, -nearZero]
+testData <- testData[, -nearZero]
+dim(trainData)
+```
+#There are 10652 observations and 57 variables in the training data
+
+```{r}
+dim(testData)
+```
+#There are 5731 observations and 57 variables in the testing data
+
+
+View(trainData)
+View(testData)
+
+
+#Create model based predictions by using Baye's Theorem to identify optimal classifiers. Use 
+#linear disciminant analysis (lda) and Naive Bayes (nb)
+```{r, include=FALSE}
+modlda <- train(classe~., data=trainData, method="lda")
+modnb <- train(classe~., data=trainData, method="nb")
+```
+
+#Prediction
+```{r, include=FALSE}
+plda = predict(modlda, testData)
+pnd = predict(modnb, testData)
+```
+
+View(plda)
+View(pnd)
+
+```{r}
+table(plda,pnd)
+```
+
+#Compare the results using two exercises
+
+```{r}
+equalPredictions = (plda == pnd)
+qplot(yaw_forearm, yaw_dumbbell, geom=c("point", "smooth"), colour=equalPredictions, data=testData)
+```
+
+#Predict with Random Forests
+```{r, include=FALSE}
+library(ggplot2)
+library(caret)
+```
+
+#Create model based predictions by using Random Forests (rf). Use data that was previously cleaned.
+
+```{r, include=FALSE}
+mod_rf <- trainControl(method="cv", number=3, verboseIter=FALSE)
+mod_rf1 <- train(classe ~ ., data=trainData, method="rf", trControl=mod_rf)
+```
+
+```{r}
+mod_rf1$finalModel
+```
+
+#Determine the accuracy by using the test data
+
+```{r}
+library(randomForest)
+tree2 <- getTree(mod_rf1$finalModel, k=2)
+tree2
+```
+
+#Predict new values
+```{r, include=FALSE}
+predict_rf1 <- predict(mod_rf1, testData)
+
+testData$PredRight <- predict_rf1 == testData$classe
+```
+
+```{r}
+table(predict_rf1, testData$classe)
+```
+
+
+```{r}
+qplot(yaw_forearm, yaw_dumbbell, geom=c("point", "smooth"), colour=predict_rf1, data=testData, main= "New_data_Predictions")
+```
+
+
+#Validate the data from random forest and use prediction model for the Final quiz
+Results <- predict(mod_rf1, newdata=testData)
+Results
